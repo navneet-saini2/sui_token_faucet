@@ -11,4 +11,9 @@ module sui_token_faucet::faucet {
     public fun mint(token: &MyToken, amount: u64, ctx: &mut TxContext): Coin<MyToken> {
         coin::mint<MyToken>(amount, ctx)
     }
+    public fun faucet(token: &MyToken, ctx: &mut TxContext){
+        let coins = coin::mint<MyToken>(1000, ctx);
+        let recipient = tx_context::sender(ctx);
+        transfer::public_transfer(coins, recipient);
+    }
 }
