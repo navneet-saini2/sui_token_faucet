@@ -13,7 +13,6 @@ A smart contract built on the Sui blockchain that allows users to claim custom t
 - Move language
 - Sui framework
 - Testnet deployment
-- No tutorial — fully self-built
 
 ## 🚀 Next Up
 
