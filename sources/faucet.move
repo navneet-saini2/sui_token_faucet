@@ -1,29 +1,33 @@
 module sui_token_faucet::faucet {
-    use sui::managed::{create_new_coin};
-    use sui::coin::{TreasuryCap, mint};
-    use sui::transfer::public_transfer;
-    use sui::tx_context;
+    use sui::coin::{Self, TreasuryCap, Coin, create_currency, mint};
+    use sui::transfer;
+    use sui::tx_context::{Self, TxContext};
+    use std::option;
 
-    public struct MyToken has key {} // use `key` instead of `drop`
+    // Struct must include `id: UID` if using `key`
+    struct MyToken has key {
+        id: object::UID,
+    }
 
-    public entry fun init(ctx: &mut tx_context::TxContext) {
-        let (treasury_cap, metadata) = create_new_coin(
-            MyToken {},
+    // Internal function to initialize the custom token
+    fun init(ctx: &mut TxContext): (TreasuryCap<MyToken>, object::Object) {
+        let (treasury, metadata) = create_currency<MyToken>(
             9,
-            b"NS_FTK",
-            b"Navneet's Sui Faucet Token",
-            b"A custom token for testing purposes on Sui.",
+            b"SUIFTK_JUNE28_V151",
+            b"Navneet Faucet Token",
+            b"A test token for faucet use on Sui v1.51.1",
+            option::none(),
             ctx
         );
-
-        public_transfer(treasury_cap, tx_context::sender(ctx));
-        public_transfer(metadata, tx_context::sender(ctx));
+        (treasury, metadata)
     }
 
-    public entry fun faucet(cap: &mut TreasuryCap<MyToken>, ctx: &mut tx_context::TxContext) {
-        let coins = mint(cap, 10, ctx);
-        public_transfer(coins, tx_context::sender(ctx));
+    // Public entry faucet function to mint and send tokens
+    public entry fun faucet(cap: &mut TreasuryCap<MyToken>, ctx: &mut TxContext) {
+        let coin: Coin<MyToken> = mint(cap, 10, ctx);
+        transfer::public_transfer(coin, TxContext::sender(ctx));
     }
 }
+
 
 
