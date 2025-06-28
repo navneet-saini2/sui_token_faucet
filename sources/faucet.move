@@ -1,30 +1,29 @@
 module sui_token_faucet::faucet {
     use sui::coin::{TreasuryCap, create_currency, mint};
     use sui::transfer::public_transfer;
-    // Removed: use sui::tx_context; // This line is no longer needed as tx_context is implicitly available
+    use sui::tx_context::Self as TxContext; // Explicitly alias tx_context as TxContext to resolve warning cleanly
     use std::option::none;
-    use sui::tx_context::{Self, sender}; // Explicitly import for clarity if needed, otherwise just `tx_context` is fine implicitly.
 
     public struct MyToken has drop {}
 
-    fun init(ctx: &mut tx_context::TxContext) {
+    fun init(ctx: &mut TxContext) { // Use TxContext alias
         let (treasury_cap, metadata) = create_currency(
             MyToken {},
             9,
-            b"SUIFAUCET_NAV20250628", // Changed to a highly unique symbol (includes date for guaranteed uniqueness)
-            b"Navneet's Sui Test Faucet Token Jun28", // Changed to a highly unique name
+            b"FAUCET_RAND_XYZ_20250628_1439", // New, highly unique symbol with current timestamp
+            b"Random Faucet Token Jun 28 2025 14:39", // New, highly unique name
             b"A custom token for testing purposes on Sui.",
             none(),
             ctx
         );
 
-        public_transfer(treasury_cap, tx_context::sender(ctx));
-        public_transfer(metadata, tx_context::sender(ctx));
+        public_transfer(treasury_cap, TxContext::sender(ctx)); // Use TxContext::sender
+        public_transfer(metadata, TxContext::sender(ctx));    // Use TxContext::sender
     }
 
-    public entry fun faucet(cap: &mut TreasuryCap<MyToken>, ctx: &mut tx_context::TxContext) {
+    public entry fun faucet(cap: &mut TreasuryCap<MyToken>, ctx: &mut TxContext) { // Use TxContext alias
         let coins = mint(cap, 10, ctx);
-        public_transfer(coins, tx_context::sender(ctx));
+        public_transfer(coins, TxContext::sender(ctx)); // Use TxContext::sender
     }
 }
 
