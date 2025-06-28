@@ -1,19 +1,18 @@
 module sui_token_faucet::faucet {
-    use sui::coin::{TreasuryCap, create_currency, mint};
+    use sui::managed::{create_new_coin};
+    use sui::coin::{TreasuryCap, mint};
     use sui::transfer::public_transfer;
-    use sui::tx_context; // This is the line generating the "duplicate alias" warning. It's harmless.
-    use std::option::none;
+    use sui::tx_context;
 
-    public struct MyToken has drop {}
+    public struct MyToken has key {} // use `key` instead of `drop`
 
-    fun init(ctx: &mut tx_context::TxContext) {
-        let (treasury_cap, metadata) = create_currency(
+    public entry fun init(ctx: &mut tx_context::TxContext) {
+        let (treasury_cap, metadata) = create_new_coin(
             MyToken {},
             9,
-            b"NS_FTK", // Changed to a new, unique symbol (Navneet's Sui Faucet Token)
-            b"Navneet's Sui Faucet Token", // Changed to a new, unique name
+            b"NS_FTK",
+            b"Navneet's Sui Faucet Token",
             b"A custom token for testing purposes on Sui.",
-            none(),
             ctx
         );
 
@@ -26,4 +25,5 @@ module sui_token_faucet::faucet {
         public_transfer(coins, tx_context::sender(ctx));
     }
 }
+
 
