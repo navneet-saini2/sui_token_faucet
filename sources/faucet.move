@@ -1,7 +1,7 @@
 module sui_token_faucet::faucet {
     use sui::coin::{TreasuryCap, create_currency, mint};
     use sui::transfer::public_transfer;
-    use sui::tx_context::Self as TxContext; // Explicitly alias tx_context as TxContext to resolve warning cleanly
+    use sui::tx_context::Self as TxContext; // Explicitly alias tx_context as TxContext to avoid warnings
     use std::option::none;
 
     public struct MyToken has drop {}
@@ -10,9 +10,9 @@ module sui_token_faucet::faucet {
         let (treasury_cap, metadata) = create_currency(
             MyToken {},
             9,
-            b"FAUCET_RAND_XYZ_20250628_1439", // New, highly unique symbol with current timestamp
-            b"Random Faucet Token Jun 28 2025 14:39", // New, highly unique name
-            b"A custom token for testing purposes on Sui.",
+            b"MTK", // Updated symbol to MTK
+            b"MyToken", // Updated name to MyToken
+            b"A custom token created by Navneet for testing purposes on Sui.",
             none(),
             ctx
         );
