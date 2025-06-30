@@ -4,8 +4,8 @@ module sui_token_faucet::faucet {
     use sui::tx_context::Self as TxContext;
     use std::option::none;
 
-    // Add the 'key' ability to MyToken
-    public struct MyToken has drop, store, key {} // Added 'key' ability
+    // Add the 'store' ability to MyToken
+    public struct MyToken has drop, store {}
 
     fun init(ctx: &mut TxContext) {
         let (treasury_cap, metadata) = create_currency(
